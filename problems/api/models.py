@@ -1,7 +1,6 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 import uuid
-
-# Create your models here.
 
 
 class Problem(models.Model):
@@ -11,6 +10,8 @@ class Problem(models.Model):
     description = models.TextField(blank=False)
     input = models.TextField(blank=False)
     output = models.TextField(blank=False)
+    timeout = models.IntegerField(blank=False, validators=[
+                                  MinValueValidator(1), MaxValueValidator(100)])
 
 
 class Run(models.Model):
@@ -18,3 +19,4 @@ class Run(models.Model):
     user_id = models.TextField(blank=False)
     problem = models.ForeignKey(Problem, blank=False, on_delete=models.CASCADE)
     code = models.TextField(blank=False)
+    status = models.TextField(blank=False)

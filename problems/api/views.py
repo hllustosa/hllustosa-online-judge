@@ -133,6 +133,7 @@ class RunsListView(APIView):
         if runs_serializer.is_valid():
             run = runs_serializer.create(runs_serializer.validated_data)
             run.user_id = user_id
+            run.status = 'pending'
             run.save()
             
             return JsonResponse(RunResponseSerializer(run).data, status=status.HTTP_201_CREATED)
