@@ -5,12 +5,14 @@ from django.core.paginator import Paginator
 from rest_framework.parsers import JSONParser
 from rest_framework import status
 
+from api.utils import JWTAuthentication
 from api.models import Problem, Run
 from api.utils import IsAuthenticatedWith, method_permission_classes, ANY, TEACHER
 from api.serializers import ProblemRequestSerializer, ProblemResponseSerializer, RunRequestSerializer, RunResponseSerializer
+from .bus import Bus
 
 from rest_framework.views import APIView
-from api.utils import JWTAuthentication
+
 
 class ProblemsListView(APIView):
 
@@ -34,7 +36,7 @@ class ProblemsListView(APIView):
 
     @method_permission_classes((IsAuthenticatedWith(TEACHER),))
     def post(self, request):
-        
+
         auth = JWTAuthentication()
         user_id = auth.get_user_id(request)
 
@@ -42,10 +44,11 @@ class ProblemsListView(APIView):
         problems_serializer = ProblemRequestSerializer(data=problem_data)
 
         if problems_serializer.is_valid():
-            problem = problems_serializer.create(problems_serializer.validated_data)
+            problem = problems_serializer.create(
+                problems_serializer.validated_data)
             problem.setter = user_id
             problem.save()
-            
+
             return JsonResponse(ProblemResponseSerializer(problem).data, status=status.HTTP_201_CREATED)
 
         return JsonResponse(problems_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -106,7 +109,7 @@ class RunsListView(APIView):
 
     @method_permission_classes((IsAuthenticatedWith(ANY),))
     def get(self, request):
-        
+
         auth = JWTAuthentication()
         user_id = auth.get_user_id(request)
 
@@ -120,10 +123,10 @@ class RunsListView(APIView):
         runs_serializer = RunResponseSerializer(
             paginator.page(page), many=True)
         return JsonResponse({'items': runs_serializer.data, 'count': count}, safe=False)
-    
+
     @method_permission_classes((IsAuthenticatedWith(ANY),))
     def post(self, request):
-        
+
         auth = JWTAuthentication()
         user_id = auth.get_user_id(request)
 
@@ -135,7 +138,10 @@ class RunsListView(APIView):
             run.user_id = user_id
             run.status = 'pending'
             run.save()
-            
+
+            bus = Bus()
+            bus.send_run(run)
+
             return JsonResponse(RunResponseSerializer(run).data, status=status.HTTP_201_CREATED)
 
         return JsonResponse(runs_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -145,7 +151,7 @@ class RunsAllListView(APIView):
 
     @method_permission_classes((IsAuthenticatedWith(TEACHER),))
     def get(self, request):
-        
+
         runs = Run.objects.all().order_by('id')
         page = request.query_params.get('page', 1)
         pageSize = request.query_params.get('pageSize', 10)
@@ -156,7 +162,8 @@ class RunsAllListView(APIView):
         runs_serializer = RunResponseSerializer(
             paginator.page(page), many=True)
         return JsonResponse({'items': runs_serializer.data, 'count': count}, safe=False)
-    
+
+
 class RunsDetailsView(APIView):
 
     @property
@@ -173,7 +180,7 @@ class RunsDetailsView(APIView):
     @method_permission_classes((IsAuthenticatedWith(ANY),))
     def get(self, request, pk):
         run = self.get_run(pk)
-        
+
         if run == None:
             return self.not_found()
 
@@ -189,7 +196,7 @@ class RunsDetailsView(APIView):
     @method_permission_classes((IsAuthenticatedWith(TEACHER),))
     def delete(self, request, pk):
         run = self.get_run(pk)
-        
+
         if run == None:
             return self.not_found()
 

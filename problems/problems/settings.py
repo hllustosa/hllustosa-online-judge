@@ -43,11 +43,6 @@ INSTALLED_APPS = [
     'api',
 ]
 
-REST_FRAMEWORK = {
-     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -108,6 +103,8 @@ SIMPLE_JWT = {
 
 WSGI_APPLICATION = 'problems.wsgi.application'
 
+# RabbitMq
+RABBITMQ = "amqp://guest:guest@localhost/"
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -119,7 +116,7 @@ DATABASES = {
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
             'host': 'mongodb+srv://onlinejudge:wnf6qZpOjPDNpY5G@cluster0.fe27t.mongodb.net/problems?retryWrites=true&w=majority'
-        }  
+        }
     }
 }
 
