@@ -9,6 +9,9 @@ dependencies = [
     "django~=3.2",
     "djangorestframework~=3.12",
     "djangorestframework-simplejwt~=4.7",
+    "mongoengine~=0.23",
+    "djongo~=1.3",
+    "dnspython~=2.1",
 ]
 requires-python = ">=3.8"
 dynamic = ["classifiers"]

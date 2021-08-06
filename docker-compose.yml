@@ -1,0 +1,62 @@
+version: '3.7'
+services:
+  rabbitmq:
+    image: 'rabbitmq:3-management-alpine'
+    container_name: rabbitmq
+    restart: always
+    volumes:
+      - '/docker/rabbitmq/data:/var/lib/rabbitmq'
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    networks: 
+      - net
+  users:
+    build:
+      context: ./
+      dockerfile: users.dockerfile
+      args:
+        prod: prod
+    container_name: users
+    restart: always
+    ports:
+      - '8000:8000'
+    networks: 
+      - net
+  problems:
+    build:
+      context: ./
+      dockerfile: problems.dockerfile
+      args:
+        prod: prod
+    container_name: problems
+    restart: always
+    ports:
+      - '8001:8000'
+    networks: 
+      - net
+  scores:
+    build:
+      context: ./
+      dockerfile: scores.dockerfile
+      args:
+        prod: prod
+    container_name: scores
+    restart: always
+    ports:
+      - '8002:8000'
+    networks: 
+      - net
+  runner:
+    build:
+      context: ./
+      dockerfile: runner.dockerfile
+    container_name: runner
+    restart: always
+    ports:
+      - '8003:8080'
+    networks: 
+      - net
+networks:
+  net:
+    name: onlinejudge

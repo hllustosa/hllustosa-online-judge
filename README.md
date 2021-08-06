@@ -41,4 +41,8 @@ pdm --pep582 >> ~/.bash_profile
 pdm --pep582
 ```
 
-TODO
+##
+Install seccomp
+```
+python3-seccomp
+```
