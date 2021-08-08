@@ -20,3 +20,5 @@ class Run(models.Model):
     problem = models.ForeignKey(Problem, blank=False, on_delete=models.CASCADE)
     code = models.TextField(blank=False)
     status = models.TextField(blank=False)
+    created_at = models.DateTimeField(null=True, blank=True)
+    finished_at = models.DateTimeField(null=True, blank=True)

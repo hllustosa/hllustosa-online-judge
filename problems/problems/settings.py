@@ -116,7 +116,7 @@ DATABASES = {
         'NAME': 'problems',
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
-            'host': 'mongodb+srv://onlinejudge:wnf6qZpOjPDNpY5G@cluster0.fe27t.mongodb.net/problems?retryWrites=true&w=majority'
+            'host': 'mongodb://admin:pass@mongo/admin?retryWrites=true&w=majority' if 'PRODUCTION' in os.environ.keys() else 'mongodb://admin:pass@localhost/admin?retryWrites=true&w=majority'
         }
     }
 }

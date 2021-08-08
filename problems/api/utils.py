@@ -61,7 +61,7 @@ class JWTAuthentication():
             return None
 
         validated_token = self.get_validated_token(raw_token)
-        return validated_token.payload['id']
+        return str(validated_token.payload['id'])
 
     def authenticate_header(self, request):
         return '{0} realm="{1}"'.format(

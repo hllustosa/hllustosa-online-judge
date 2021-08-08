@@ -4,6 +4,7 @@ from django.http.response import JsonResponse
 from django.core.paginator import Paginator
 from rest_framework.parsers import JSONParser
 from rest_framework import status
+from django.utils import timezone
 
 from api.utils import JWTAuthentication
 from api.models import Problem, Run
@@ -137,6 +138,7 @@ class RunsListView(APIView):
             run = runs_serializer.create(runs_serializer.validated_data)
             run.user_id = user_id
             run.status = 'pending'
+            run.created_at = timezone.now()
             run.save()
 
             run = Run.objects.select_related('problem').get(pk=run.id)
@@ -192,8 +194,8 @@ class RunsDetailsView(APIView):
         if run.user_id != user_id and run.problem.setter != user_id:
             return JsonResponse({'message': 'You don\'t have permission to access this run '}, status=status.HTTP_403_FORBIDDEN)
 
-        problem_serializer = ProblemResponseSerializer(run)
-        return JsonResponse(problem_serializer.data)
+        serializer = RunResponseSerializer(run)
+        return JsonResponse(serializer.data)
 
     @method_permission_classes((IsAuthenticatedWith(TEACHER),))
     def delete(self, request, pk):
