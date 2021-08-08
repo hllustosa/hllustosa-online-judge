@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from datetime import timedelta
 
@@ -104,7 +105,7 @@ SIMPLE_JWT = {
 WSGI_APPLICATION = 'problems.wsgi.application'
 
 # RabbitMq
-RABBITMQ = "amqp://guest:guest@rabbitmq/"
+RABBITMQ = "amqp://guest:guest@rabbitmq/" if 'PRODUCTION' in os.environ.keys() else "amqp://guest:guest@localhost/"
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
