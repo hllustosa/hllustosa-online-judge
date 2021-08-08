@@ -104,7 +104,7 @@ SIMPLE_JWT = {
 WSGI_APPLICATION = 'problems.wsgi.application'
 
 # RabbitMq
-RABBITMQ = "amqp://guest:guest@localhost/"
+RABBITMQ = "amqp://guest:guest@rabbitmq/"
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases

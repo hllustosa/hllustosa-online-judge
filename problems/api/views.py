@@ -139,10 +139,12 @@ class RunsListView(APIView):
             run.status = 'pending'
             run.save()
 
+            run = Run.objects.select_related('problem').get(pk=run.id)
+            run = RunResponseSerializer(run).data
             bus = Bus()
             bus.send_run(run)
 
-            return JsonResponse(RunResponseSerializer(run).data, status=status.HTTP_201_CREATED)
+            return JsonResponse(run, status=status.HTTP_201_CREATED)
 
         return JsonResponse(runs_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

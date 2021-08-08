@@ -3,7 +3,7 @@ import asyncio
 from problems.settings import RABBITMQ
 from aio_pika import connect, Message, DeliveryMode, ExchangeType
 from django.forms.models import model_to_dict
-
+from django.core import serializers
 
 def get_or_create_eventloop():
     try:
@@ -25,9 +25,6 @@ class Bus():
     async def send_run_async(self, run):
 
         await self.init()
-        run = model_to_dict(run)
-        run["problem"] = str(run["problem"])
-
         message_body = json.dumps(run)
 
         message = Message(

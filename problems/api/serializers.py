@@ -25,3 +25,4 @@ class RunResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Run
         fields = ('id', 'user_id', 'problem', 'code', 'status')
+        depth = 1

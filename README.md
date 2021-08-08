@@ -44,5 +44,6 @@ pdm --pep582
 ##
 Install seccomp
 ```
-python3-seccomp
+apt install python3-seccomp
+pip3 install pyseccomp    
 ```

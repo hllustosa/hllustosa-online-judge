@@ -5,7 +5,7 @@ import uuid
 
 class Problem(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    setter = models.UUIDField(default=uuid.uuid4)
+    setter = models.TextField(blank=False)
     title = models.TextField(blank=False)
     description = models.TextField(blank=False)
     input = models.TextField(blank=False)
