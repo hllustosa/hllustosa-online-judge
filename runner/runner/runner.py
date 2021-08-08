@@ -45,10 +45,10 @@ def execute(*args):
 
         notify_progress(bus, execution.run_id, 'Running')
 
-        p = subprocess.Popen(
-            ['python3', f'{code_file.name}'], stdin=input_file, stdout=output_file, stderr=stderr_file)
+        process = subprocess.Popen(
+            ['timeout', f'{execution.timeout}s', 'python3', f'{code_file.name}'], stdin=input_file, stdout=output_file, stderr=stderr_file)
 
-        p.wait(timeout=execution.timeout)
+        process.wait()
 
         output = open(output_file.name, 'r').readlines()
         errors = open(stderr_file.name, 'r').readlines()
@@ -61,13 +61,16 @@ def execute(*args):
         else:
             notify_progress(bus, execution.run_id, f'Wrong Answer({result}%)') 
 
-    except Exception as err:
+    except Exception:
         notify_progress(bus, execution.run_id, 'Server Error')
+    finally:
+        kill_process(process)
+        clean_up(execution.files)
 
 
 def create_temp_file(content, files):
     temp_file = tempfile.NamedTemporaryFile(delete=False)
-
+    
     if content != None:
         temp_file.write(content.encode('utf-8'))
         temp_file.flush()
@@ -101,3 +104,16 @@ def notify_progress(bus, run_id, progress):
         'run_id': run_id,
         'progress': progress
     })
+
+def clean_up(files):
+    for file in files:
+        try:
+            os.remove(file.name)
+        except Exception as e:
+            pass
+
+def kill_process(process):
+    try:
+        process.kill()
+    except:
+        pass
