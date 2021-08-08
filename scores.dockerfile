@@ -1,4 +1,4 @@
-FROM frostming/pdm
+FROM frostming/pdm:1.6.4
 SHELL ["/bin/bash", "-c"] 
 
 WORKDIR /usr/src/app
