@@ -1,15 +1,13 @@
-from django.shortcuts import render
-
 from django.http.response import JsonResponse
 from django.core.paginator import Paginator
 from rest_framework.parsers import JSONParser
 from rest_framework import status
 from django.utils import timezone
 
-from api.utils import JWTAuthentication
-from api.models import Problem, Run
-from api.utils import IsAuthenticatedWith, method_permission_classes, ANY, TEACHER
-from api.serializers import ProblemRequestSerializer, ProblemResponseSerializer, RunRequestSerializer, RunResponseSerializer
+from .utils import JWTAuthentication
+from .models import Problem, Run
+from .utils import IsAuthenticatedWith, method_permission_classes, ANY, TEACHER
+from .serializers import ProblemRequestSerializer, ProblemResponseSerializer, RunRequestSerializer, RunResponseSerializer
 from .bus import Bus
 
 from rest_framework.views import APIView

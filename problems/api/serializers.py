@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Problem, Run
+from .models import Problem, Run
 
 
 class ProblemRequestSerializer(serializers.ModelSerializer):

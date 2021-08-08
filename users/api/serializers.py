@@ -1,6 +1,8 @@
+from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from api.models import Profile
+from rest_framework import serializers
+from .models import Profile
 
 class ClaimsObtainPairSerializer(TokenObtainPairSerializer):
     
@@ -21,3 +23,9 @@ class ClaimsObtainPairSerializer(TokenObtainPairSerializer):
                 pass
 
         return token
+
+class UserResponseSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'email')
