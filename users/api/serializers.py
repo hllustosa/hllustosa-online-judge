@@ -6,16 +6,18 @@ class ClaimsObtainPairSerializer(TokenObtainPairSerializer):
     
     @classmethod
     def get_token(cls, user):
-        #try:
+
         token = super().get_token(user)
-        profile = Profile.objects.get(user_id__exact=user.id)
 
-        # Add custom claims
         token['id'] = user.id
-        token['type'] = profile.type
-        # ...
+        if user.is_superuser:
+            #All superusers are teachers
+            token['type'] = 'T'
+        else:
+            try:
+                profile = Profile.objects.get(user_id__exact=user.id)
+                token['type'] = profile.type
+            except:
+                pass
 
-        #except:
-        #    pass
-        #finally:
         return token

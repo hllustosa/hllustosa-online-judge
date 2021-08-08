@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 from datetime import timedelta
 
@@ -108,6 +108,8 @@ SIMPLE_JWT = {
 
 WSGI_APPLICATION = 'scores.wsgi.application'
 
+#rabbitmq
+RABBITMQ = "amqp://guest:guest@rabbitmq/" if 'PRODUCTION' in os.environ.keys() else "amqp://guest:guest@localhost/"
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -118,7 +120,7 @@ DATABASES = {
         'NAME': 'scores',
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
-            'host': 'mongodb+srv://onlinejudge:wnf6qZpOjPDNpY5G@cluster0.fe27t.mongodb.net/scores?retryWrites=true&w=majority'
+            'host': 'mongodb://admin:pass@mongo/admin?retryWrites=true&w=majority' if 'PRODUCTION' in os.environ.keys() else 'mongodb://admin:pass@localhost/admin?retryWrites=true&w=majority'
         }  
     }
 }
