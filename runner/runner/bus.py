@@ -53,7 +53,7 @@ class Bus():
         )
 
         # Declaring queue
-        queue = await channel.declare_queue(name="runs", exclusive=True)
+        queue = await channel.declare_queue(name="runs", exclusive=False)
 
         # Binding the queue to the exchange
         await queue.bind(logs_exchange)
