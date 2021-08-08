@@ -1,5 +1,18 @@
 version: '3.7'
 services:
+  mongo:
+    image: mongo:3.4.2
+    container_name: mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_DATABASE=admin
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+    ports:
+      - '27017:27017'
+    command: mongod --auth
+    networks: 
+      - net
   rabbitmq:
     image: 'rabbitmq:3-management-alpine'
     container_name: rabbitmq
@@ -20,7 +33,9 @@ services:
     container_name: users
     restart: always
     ports:
-      - '8000:8000'
+      - '8001:8000'
+    depends_on:
+      - "mongo"
     networks: 
       - net
   problems:
@@ -31,8 +46,11 @@ services:
         prod: prod
     container_name: problems
     restart: always
+    depends_on:
+      - "mongo"
+      - "rabbitmq"
     ports:
-      - '8001:8000'
+      - '8002:8000'
     networks: 
       - net
   scores:
@@ -43,8 +61,11 @@ services:
         prod: prod
     container_name: scores
     restart: always
+    depends_on:
+      - "mongo"
+      - "rabbitmq"
     ports:
-      - '8002:8000'
+      - '8003:8000'
     networks: 
       - net
   runner:
@@ -53,8 +74,10 @@ services:
       dockerfile: runner.dockerfile
     container_name: runner
     restart: always
+    depends_on:
+      - "rabbitmq"
     ports:
-      - '8003:8080'
+      - '8004:8080'
     networks: 
       - net
 networks:

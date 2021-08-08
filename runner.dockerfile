@@ -7,10 +7,13 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONPATH '/usr/local/lib/python3.9/site-packages/pdm/pep582'
+ENV PRODUCTION 'PRODUCTION'
+ENV PYTHONSANDBOX 'PYTHONSANDBOX'
 
 # install dependencies
 COPY . /usr/src/app
 RUN pdm install
+RUN pip3 install pyseccomp
 EXPOSE 8000
 
 CMD ["python", "runner/main.py"]
