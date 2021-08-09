@@ -1,49 +1,51 @@
+
 # The Online Judge
 
-The Online Judge is a python/django app that allows teachers to create an environment
-where teachers can set up programming problems and students can try to solve them by submitting
-their code.
+ 
+O Online Judge é uma api desenvolvida em python/django que permitem com que professores criem exercícios de programação em python, informado um enunciado com uma descrição e conjunto de entradas que devem ser processadas por um programa e as saídas que esse programa devem produzir. Esses exercícios podem ser resolvidos por alunos, que irão submeter seu código e obter um resultado. 
 
-### Set up
+A api foi construída com 4 microsserviços principais:
 
-This project uses PDM. It requires python version 3.7 or higher.
+ - Users: Responsável por amarzenar dados do usuário e prover mecanismos de autenticação baseado em JWT
+ - Problems: Responsável por armazenar os dados dos problemas e por receber as submissões dos alunos e enviá-las ao serviço de execução
+ - Runner: Responsável por executar o código python em uma sandboxe determinar a corretude.
+ - Score: Responsável por manter um sumário das execuções e contador de exercícios acertados/tenatos por usuário.
+ 
+### Ambiente de Desenvolvimento
+  
+Esse projeto utiliza o pdm, para instalá-lo siga esse [tutorial](https://pdm.fming.dev/).
 
-Like Pip, PDM provides an installation script that will install PDM into an isolated environment.
-
-**For Linux/Mac**
-
-```
-curl -sSL https://raw.githubusercontent.com/pdm-project/pdm/main/install-pdm.py | python -
-```
-
-**For Windows**
+Com o  pdm corretamente configurado, é possível instalar as dependências do projeto executando:
 
 ```
-(Invoke-WebRequest -Uri https://raw.githubusercontent.com/pdm-project/pdm/main/install-pdm.py -UseBasicParsing).Content | python - 
-```
-
-Once pdm is installed, you should install the dependencies
-
-```
+git clone https://github.com/hllustosa/online-judge
+cd online-judge
 pdm install
 ```
-Now you should enable PEP 852, so the python interpreter will be able to look for installed packages
 
-**For Linux/Mac**
+Cada projeto pode ser executado independentemente através dos scripts:
 
-```bash
-pdm --pep582 >> ~/.bash_profile
+```
+./run_problems.sh
+./run_scores.sh
+./run_users.sh
 ```
 
-**For Windows**
+Porém, neste caso é necessário ter o rabbitmq (com usuário e senha "guest" e "guest" respectivamente) e o mongodb (com autenticação ativa e um usuário: "admin" e com senha: "pass")  em execução e acessíveis através do localhost com suas portas padrão. Isto é necessário para executar, desenvolver ou testar a aplicação fora do docker.
 
-```powershell
-pdm --pep582
-```
+### Executar o Projeto
 
-##
-Install seccomp
+A maneira aconselhável de executar o projeto é através do docker compose (isto exige que o docker e o docker-compose estejam instalados no ambiente). O docker-compose executa todos os microsserviços com suas dependências corretamente:
+
 ```
-apt install python3-seccomp
-pip3 install pyseccomp    
+docker-compose up -d
 ```
+Após a execução os serviços ficarão acessíveis em:
+
+ - Users: http://localhost:8001/
+ - Problems: http://localhost:8002/
+ - Score: http://localhost:8003/
+ 
+ ### Api Online Judge
+ 
+[Esta collection do postman](https://github.com/hllustosa/online-judge/blob/master/online_judge.postman_collection.json) contém exemplos de requisições básicas, como login, criação de problemas, submissão de código, verificação de resultado de execução e placar.
