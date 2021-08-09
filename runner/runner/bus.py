@@ -1,7 +1,8 @@
 import json
 import asyncio
+from tenacity import *
 from runner.settings import RABBITMQ
-from aio_pika import connect, Message, DeliveryMode, ExchangeType
+from aio_pika import connect_robust, Message, DeliveryMode, ExchangeType
 from django.core import serializers
 
 
@@ -18,7 +19,7 @@ def get_or_create_eventloop():
 class Bus():
 
     async def init(self):
-        self.connection = await connect(RABBITMQ)
+        self.connection = await connect_robust(RABBITMQ)
         self.channel = await self.connection.channel()
         self.notifications_exchange = await self.channel.declare_exchange("notifications", ExchangeType.FANOUT)
 
@@ -38,9 +39,10 @@ class Bus():
     def send_notification(self, notification):
         asyncio.run(self.send_notifications_async(notification))
 
+    @retry(wait=wait_exponential(multiplier=1, min=4, max=10))
     async def register_message(self, on_message, loop):
 
-        connection = await connect(
+        connection = await connect_robust(
             RABBITMQ, loop=loop
         )
 
