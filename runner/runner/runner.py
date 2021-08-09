@@ -14,6 +14,8 @@ class Execution():
     def __init__(self, msg):
         self.run_id = msg['id']
         self.code = msg['code']
+        self.user_id = msg['user_id']
+        self.problem_id = msg['problem']['id']
         self.input = msg['problem']['input']
         self.timeout = msg['problem']['timeout']
         self.expected_output = msg['problem']['output'].split("\n")
@@ -43,7 +45,7 @@ def execute(*args):
         output_file = create_temp_file(None, files=execution.files)
         stderr_file = create_temp_file(None, files=execution.files)
 
-        notify_progress(bus, execution.run_id, 'Running')
+        notify_progress(bus, execution, 'Running')
 
         process = subprocess.Popen(
             ['timeout', f'{execution.timeout}s', 'python3', f'{code_file.name}'], stdin=input_file, stdout=output_file, stderr=stderr_file)
@@ -55,14 +57,14 @@ def execute(*args):
         result = calc_diff(output, execution.expected_output)
 
         if len(errors) != 0:
-            notify_progress(bus, execution.run_id, 'Runtime or Compilation Error')
+            notify_progress(bus, execution, 'Runtime or Compilation Error')
         elif result == CORRECT_OUTPUT:
-            notify_progress(bus, execution.run_id, 'Success')
+            notify_progress(bus, execution, 'Success')
         else:
-            notify_progress(bus, execution.run_id, f'Wrong Answer({result}%)') 
+            notify_progress(bus, execution, f'Wrong Answer({result}%)') 
 
     except Exception:
-        notify_progress(bus, execution.run_id, 'Server Error')
+        notify_progress(bus, execution, 'Server Error')
     finally:
         kill_process(process)
         clean_up(execution.files)
@@ -99,9 +101,11 @@ def calc_diff(output, expected_output):
         return percentage_correct_lines*100
 
 
-def notify_progress(bus, run_id, progress):
+def notify_progress(bus, run, progress):
     bus.send_notification({
-        'run_id': run_id,
+        'run_id': run.run_id,
+        'problem_id': run.problem_id,
+        'user_id': run.user_id,
         'progress': progress
     })
 
