@@ -9,6 +9,7 @@ import threading
 
 CORRECT_OUTPUT = 100.0
 
+
 class Execution():
 
     def __init__(self, msg):
@@ -61,7 +62,7 @@ def execute(*args):
         elif result == CORRECT_OUTPUT:
             notify_progress(bus, execution, 'Success')
         else:
-            notify_progress(bus, execution, f'Wrong Answer({result}%)') 
+            notify_progress(bus, execution, f'Wrong Answer({result}%)')
 
     except Exception:
         notify_progress(bus, execution, 'Server Error')
@@ -72,7 +73,7 @@ def execute(*args):
 
 def create_temp_file(content, files):
     temp_file = tempfile.NamedTemporaryFile(delete=False)
-    
+
     if content != None:
         temp_file.write(content.encode('utf-8'))
         temp_file.flush()
@@ -109,12 +110,14 @@ def notify_progress(bus, run, progress):
         'progress': progress
     })
 
+
 def clean_up(files):
     for file in files:
         try:
             os.remove(file.name)
         except Exception as e:
             pass
+
 
 def kill_process(process):
     try:

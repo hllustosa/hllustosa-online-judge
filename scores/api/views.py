@@ -7,8 +7,10 @@ from .serializers import ScoreResponseSerializer
 from rest_framework.views import APIView
 
 # Create your views here.
+
+
 class ScoreListView(APIView):
-    
+
     @method_permission_classes((IsAuthenticatedWith(ANY),))
     def get(self, request):
 
@@ -23,8 +25,9 @@ class ScoreListView(APIView):
             paginator.page(page), many=True)
         return JsonResponse({'items': scores_serializer.data, 'count': count}, safe=False)
 
+
 class ScoreDetailsListView(APIView):
-    
+
     @method_permission_classes((IsAuthenticatedWith(ANY),))
     def get(self, request, pk):
         score = Score.objects.get(user_id=pk)

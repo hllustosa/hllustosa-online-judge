@@ -16,7 +16,7 @@ def score_update(message):
 
     problem_id = message['problem_id']
     status = message['progress']
-    
+
     if status == 'Pending' or status == 'Running':
         return
 
@@ -30,5 +30,5 @@ def score_update(message):
         if problem_id not in resolved:
             resolved.append(problem_id)
             score.resolved_list = resolved
-    
+
     score.save()

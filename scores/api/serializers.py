@@ -6,4 +6,5 @@ class ScoreResponseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Score
-        fields = ('id', 'user_id', 'resolved_count', 'resolved_list', 'tried_count', 'tried_list')
+        fields = ('id', 'user_id', 'resolved_count',
+                  'resolved_list', 'tried_count', 'tried_list')

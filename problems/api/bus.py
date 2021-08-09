@@ -7,6 +7,7 @@ from aio_pika import connect, Message, DeliveryMode, ExchangeType, exchange
 from django.forms.models import model_to_dict
 from django.core import serializers
 
+
 def get_or_create_eventloop():
     try:
         return asyncio.get_event_loop()
@@ -51,13 +52,15 @@ class Bus(threading.Thread):
         connection = self.get_connection()
         channel = connection.channel()
 
-        channel.exchange_declare(exchange='notifications', exchange_type='fanout')
+        channel.exchange_declare(
+            exchange='notifications', exchange_type='fanout')
         channel.queue_declare(queue='notifications', exclusive=False)
-        
+
         channel.queue_bind(exchange='notifications', queue='notifications')
-        
+
         channel.basic_qos(prefetch_count=1)
-        channel.basic_consume(on_message_callback=self.callback, queue='notifications', auto_ack=True)
+        channel.basic_consume(on_message_callback=self.callback,
+                              queue='notifications', auto_ack=True)
         channel.start_consuming()
 
     def callback(self, ch, method, properties, body):
