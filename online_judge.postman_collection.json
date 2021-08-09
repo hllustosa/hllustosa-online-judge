@@ -1,0 +1,283 @@
+{
+	"info": {
+		"_postman_id": "6df7de14-8a0b-4287-bf36-1321d51a2c88",
+		"name": "Online Judge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.collectionVariables.set(\"token\", jsonData.access);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\" : \"onlinejudge\",\r\n    \"password\" : \"onlinejudge\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{users_url}}/api/token/",
+					"host": [
+						"{{users_url}}"
+					],
+					"path": [
+						"api",
+						"token",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Problem A",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.collectionVariables.set(\"problem1_id\", jsonData.id);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"setter\": \"1\",\r\n    \"title\": \"Problema de Teste A\",\r\n    \"description\": \"teste\",\r\n    \"input\": \"1 2\\n2 4\\n3 5\\n4 6\",\r\n    \"output\": \"3\\n6\\n8\\n10\",\r\n    \"timeout\": 100\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{problems_url}}/api/problems",
+					"host": [
+						"{{problems_url}}"
+					],
+					"path": [
+						"api",
+						"problems"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Succesfull Run",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.collectionVariables.set(\"success_run_id\", jsonData.id);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"code\": \"while True:\\n        try:\\n            [v1, v2] = [int(val) for val in input().split() ]\\n            print(\\\"%d\\\" % (v1 + v2))\\n        except EOFError:\\n            break\",\r\n    \"problem\": \"{{problem1_id}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{problems_url}}/api/runs",
+					"host": [
+						"{{problems_url}}"
+					],
+					"path": [
+						"api",
+						"runs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Run Status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql(\"Success\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"setTimeout(function(){}, 2000);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{problems_url}}/api/runs/{{success_run_id}}",
+					"host": [
+						"{{problems_url}}"
+					],
+					"path": [
+						"api",
+						"runs",
+						"{{success_run_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Score",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    var jsonData = pm.response.json();\r",
+							"    const problem_id = pm.variables.get(\"problem1_id\");\r",
+							"    pm.expect(jsonData.resolved_list.includes(problem_id)).to.be.true;\r",
+							"    pm.expect(jsonData.tried_list.includes(problem_id)).to.be.true;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scores_url}}/api/scores/1",
+					"host": [
+						"{{scores_url}}"
+					],
+					"path": [
+						"api",
+						"scores",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "users_url",
+			"value": "http://localhost:8001"
+		},
+		{
+			"key": "problems_url",
+			"value": "http://localhost:8002"
+		},
+		{
+			"key": "scores_url",
+			"value": "http://localhost:8003"
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "problem1_id",
+			"value": ""
+		},
+		{
+			"key": "success_run_id",
+			"value": ""
+		}
+	]
+}
